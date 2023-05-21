@@ -2,7 +2,44 @@ const Koa = require('koa');
 const bodyparser = require('koa-bodyparser');
 const error = require('koa-json-error');
 const parameter = require('koa-parameter');
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const mongoose = require('mongoose');
 const routing = require('./routes');
+const { uri } = require('./config');
+
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+async function run() {
+    try {
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+        // Ensures that the client will close when you finish/error
+        await client.close();
+    }
+}
+run().catch(console.dir);
+
+async function run2() {
+    try {
+        mongoose.set('strictQuery', false);
+        mongoose.connect(uri);
+        console.log('mongodb connected!');
+    } catch (error) {
+        console.log(error);
+        process.exit();
+    }
+}
+
+run2().catch(console.error);
 
 const app = new Koa();
 const PORT = 8080;
