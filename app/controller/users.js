@@ -23,7 +23,7 @@ class UserCtl {
     }
 
     async findById(ctx) {
-        const {fields} = ctx.query;
+        const {fields = ''} = ctx.query;
         // 'educations;bussines' => mongodb语法 '+educations+bussines'
         // filter过滤空值
         const selectFields = fields.split(';').filter(field => field).map(field => ' +' + field).join('');
